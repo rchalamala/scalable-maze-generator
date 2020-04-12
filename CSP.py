@@ -61,8 +61,8 @@ trackerColor = colorInput("Enter tracker color (Enter p to print all available c
 
 def checkForExit():
     pygame.event.pump()
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+    for action in pygame.event.get():
+        if action.type == pygame.QUIT:
             pygame.quit()
             exit()
 
@@ -71,9 +71,9 @@ console = pygame.display.set_mode((consoleSize, consoleSize))
 
 
 class Maze:
-    def __init__(self, gridSize, coordinates):
-        self._gridSize = gridSize
-        self._coordinates = coordinates
+    def __init__(self, _gridSize, _coordinates):
+        self._gridSize = _gridSize
+        self._coordinates = _coordinates
         self._gridArea = self._gridSize ** 2
         self._stack, self._solutionStack = deque(), deque()
         self._visited = full((self._gridSize, self._gridSize), False)
@@ -106,14 +106,14 @@ class Maze:
             neighbors.append((top[0], top[1] + 1))
         return neighbors
 
-    def _moveTo(self, pair):
+    def _moveTo(self, _pair):
         top = self._stack[-1]
-        self._stack.append((pair[0], pair[1]))
-        self._visited[pair[0]][pair[1]] = True
+        self._stack.append((_pair[0], _pair[1]))
+        self._visited[_pair[0]][_pair[1]] = True
         self._visitedCount += 1
         pygame.time.delay(delay)
-        self._clearPath(top, pair, blockColor)
-        self._updateTracker(top, pair)
+        self._clearPath(top, _pair, blockColor)
+        self._updateTracker(top, _pair)
         pygame.display.set_caption("Rahul Chalamala - APCSP Create - Maze Generation Status: " + "%0.2f" % (self._visitedCount / self._gridArea * 100) + "%")
         pygame.display.update()
 
@@ -182,11 +182,11 @@ for i in range(2):
     finding = False
     while finding is False:
         pygame.event.pump()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+        for action in pygame.event.get():
+            if action.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-            elif event.type == MOUSEBUTTONDOWN:
+            elif action.type == MOUSEBUTTONDOWN:
                 pair = pygame.mouse.get_pos()
                 x = int(floor(coordinateOffset(pair[0], True)))
                 y = int(floor(coordinateOffset(pair[1], True)))
