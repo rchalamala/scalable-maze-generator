@@ -17,7 +17,8 @@ for m in get_monitors():
 side = max(int(heights[0] // 100 * 1.5), 30)
 border = int(max(side / 10, 1))
 
-def coordinateOffset(operand, userInput = False):
+
+def coordinateOffset(operand, userInput=False):
     if userInput is False:
         return int(operand * (side + border) + border)
     return (operand - border) / (side + border)
@@ -31,11 +32,13 @@ consoleSize = coordinateOffset(gridSize)
 colorKeys = list(pygame.color.THECOLORS.keys())
 colorKeys.sort()
 
+
 def printColors():
     for key in colorKeys:
         print(key)
 
 colors = []
+
 
 def colorInput(text):
     color = input(text).lower()
@@ -55,6 +58,7 @@ blockColor = colorInput("Enter block color (Enter p to print all available color
 borderColor = colorInput("Enter border color (Enter p to print all available colors): ")
 trackerColor = colorInput("Enter tracker color (Enter p to print all available colors): ")
 
+
 def checkForExit():
     pygame.event.pump()
     for event in pygame.event.get():
@@ -65,26 +69,30 @@ def checkForExit():
 pygame.init()
 console = pygame.display.set_mode((consoleSize, consoleSize))
 
+
 class Maze:
     def __init__(self, gridSize, coordinates):
         self._gridSize = gridSize
         self._coordinates = coordinates
-        self._gridArea = self._gridSize ** 2;
+        self._gridArea = self._gridSize ** 2
         self._stack, self._solutionStack = deque(), deque()
         self._visited = full((self._gridSize, self._gridSize), False)
         self._stack.append(self._coordinates[0])
         self._solutionStack.append(self._coordinates[0])
         self._visited[self._coordinates[0][0]][self._coordinates[0][1]] = True
         self._visitedCount = 1
+
     @staticmethod
-    def _clearPath(first, second, color, offset = 0):
+    def _clearPath(first, second, color, offset=0):
         start = Rect(coordinateOffset(first[0]) + offset, coordinateOffset(first[1]) + offset, side - 2 * offset, side - 2 * offset)
         end = Rect(coordinateOffset(second[0]) + offset, coordinateOffset(second[1]) + offset, side - 2 * offset, side - 2 * offset)
         pygame.draw.rect(console, color, start.union(end))
+
     @staticmethod
     def _updateTracker(first, second):
         pygame.draw.rect(console, blockColor, (coordinateOffset(first[0]), coordinateOffset(first[1]), side, side))
         pygame.draw.rect(console, trackerColor, (coordinateOffset(second[0]), coordinateOffset(second[1]), side, side))
+
     def _findNeighbors(self):
         neighbors = []
         top = self._stack[-1]
@@ -97,6 +105,7 @@ class Maze:
         if top[1] < self._gridSize - 1 and not self._visited[top[0]][top[1] + 1]:
             neighbors.append((top[0], top[1] + 1))
         return neighbors
+
     def _moveTo(self, pair):
         top = self._stack[-1]
         self._stack.append((pair[0], pair[1]))
@@ -107,6 +116,7 @@ class Maze:
         self._updateTracker(top, pair)
         pygame.display.set_caption("Rahul Chalamala - APCSP Create - Maze Generation Status: " + "%0.2f" % (self._visitedCount / self._gridArea * 100) + "%")
         pygame.display.update()
+
     def visitNeighbors(self):
         pygame.display.set_caption("Rahul Chalamala - APCSP Create - Maze Generation Status: 0.00%")
         while self._visitedCount != self._gridArea:
@@ -124,6 +134,7 @@ class Maze:
                     self._solutionStack.pop()
             pygame.display.set_caption("Rahul Chalamala - APCSP Create - Maze Generation Status: " + "%0.2f" % (self._visitedCount / self._gridArea * 100) + "%")
             checkForExit()
+
     def traverseSolution(self):
         pygame.draw.rect(console, blockColor, (coordinateOffset(maze._stack[-1][0]), coordinateOffset(maze._stack[-1][1]), side, side))
         pygame.display.update()
