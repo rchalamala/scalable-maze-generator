@@ -123,8 +123,6 @@ class Maze:
                     self._solutionStack.pop()
             pygame.display.set_caption("Rahul Chalamala - APCSP Create - Maze Generation Status: " + "%0.2f" % (self._visitedCount / self._gridArea * 100) + "%")
             checkForExit()
-
-
     def traverseSolution(self):
         pygame.draw.rect(console, blockColor, (coordinateOffset(maze._stack[-1][0]), coordinateOffset(maze._stack[-1][1]), side, side))
         pygame.display.update()
