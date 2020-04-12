@@ -17,8 +17,8 @@ for m in get_monitors():
 side = max(int(heights[0] // 100 * 1.5), 30)
 border = int(max(side / 10, 1))
 
-def coordinateOffset(operand, input = False):
-    if input is False:
+def coordinateOffset(operand, userInput = False):
+    if userInput is False:
         return int(operand * (side + border) + border)
     return (operand - border) / (side + border)
 
