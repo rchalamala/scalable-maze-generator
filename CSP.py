@@ -3,7 +3,7 @@
 from collections import deque
 from numpy import floor, full
 import pygame
-from pygame import Rect, MOUSEBUTTONDOWN, QUIT
+from pygame import Rect, MOUSEBUTTONDOWN
 from random import choice
 from screeninfo import get_monitors
 from sys import exit
@@ -77,11 +77,13 @@ class Maze:
         self._solutionStack.append(self._coordinates[0])
         self._visited[self._coordinates[0][0]][self._coordinates[0][1]] = True
         self._visitedCount = 1
-    def _clearPath(self, first, second, color, offset = 0):
+    @staticmethod
+    def _clearPath(first, second, color, offset = 0):
         start = Rect(coordinateOffset(first[0]) + offset, coordinateOffset(first[1]) + offset, side - 2 * offset, side - 2 * offset)
         end = Rect(coordinateOffset(second[0]) + offset, coordinateOffset(second[1]) + offset, side - 2 * offset, side - 2 * offset)
         pygame.draw.rect(console, color, start.union(end))
-    def _updateTracker(self, first, second):
+    @staticmethod
+    def _updateTracker(first, second):
         pygame.draw.rect(console, blockColor, (coordinateOffset(first[0]), coordinateOffset(first[1]), side, side))
         pygame.draw.rect(console, trackerColor, (coordinateOffset(second[0]), coordinateOffset(second[1]), side, side))
     def _findNeighbors(self):
