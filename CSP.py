@@ -40,17 +40,17 @@ def printColors():
 colors = []
 
 
-def colorInput(text):
-    color = input(text).lower()
+def colorInput(inputText):
+    color = input(inputText).lower()
     while color == "p":
         printColors()
-        color = input(text).lower()
+        color = input(inputText).lower()
     while color not in pygame.color.THECOLORS or color in colors:
         print("Entered input is invalid. ")
-        color = input(text).lower()
+        color = input(inputText).lower()
         while color == "p":
             printColors()
-            color = input(text).lower()
+            color = input(inputText).lower()
     colors.append(color)
     return pygame.color.THECOLORS[color]
 
