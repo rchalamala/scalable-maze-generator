@@ -170,7 +170,7 @@ for i in range(2):
         text = "LEFT CLICK THE SOLUTION ENDING POINT"
     pygame.display.set_caption(text)
     finding = False
-    while finding == False:
+    while finding is False:
         pygame.event.pump()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
