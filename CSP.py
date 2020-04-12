@@ -3,7 +3,7 @@
 from collections import deque
 from numpy import floor, full
 import pygame
-from pygame import Rect, MOUSEBUTTONDOWN, QUIT
+from pygame import Rect, MOUSEBUTTONDOWN
 from random import choice
 from screeninfo import get_monitors
 from sys import exit
