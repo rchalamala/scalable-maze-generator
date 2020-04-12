@@ -20,8 +20,7 @@ border = int(max(side / 10, 1))
 def coordinateOffset(operand, input = False):
     if input is False:
         return int(operand * (side + border) + border)
-    else:
-        return (operand - border) / (side + border)
+    return (operand - border) / (side + border)
 
 gridSize = int(input("Enter Grid Size: "))
 while gridSize < 2 or coordinateOffset(gridSize) + heights[0] / 1920 * 80 > heights[0]:
