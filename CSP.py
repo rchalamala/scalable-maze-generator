@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
 from collections import deque
+from random import choice
 from numpy import floor, full
 import pygame
 from pygame import Rect, MOUSEBUTTONDOWN
-from random import choice
+
 from screeninfo import get_monitors
-from sys import exit
+import sys
 
 delay = 10
 
@@ -64,11 +65,10 @@ def checkForExit():
     for action in pygame.event.get():
         if action.type == pygame.QUIT:
             pygame.quit()
-            exit()
+            sys.exit()
 
 pygame.init()
 console = pygame.display.set_mode((consoleSize, consoleSize))
-
 
 class Maze:
     def __init__(self, _gridSize, _coordinates):
@@ -165,7 +165,7 @@ class Maze:
             checkForExit()
 
 pygame.draw.rect(console, borderColor, (0, 0, coordinateOffset(gridSize), coordinateOffset(gridSize)))
-print("running")
+
 for i in range(gridSize):
     for j in range(gridSize):
         pygame.draw.rect(console, blockColor, (coordinateOffset(i), coordinateOffset(j), side, side))
@@ -185,7 +185,7 @@ for i in range(2):
         for action in pygame.event.get():
             if action.type == pygame.QUIT:
                 pygame.quit()
-                exit()
+                sys.exit()
             elif action.type == MOUSEBUTTONDOWN:
                 pair = pygame.mouse.get_pos()
                 x = int(floor(coordinateOffset(pair[0], True)))
