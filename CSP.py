@@ -9,8 +9,6 @@ from pygame import Rect, MOUSEBUTTONDOWN
 from screeninfo import get_monitors
 import sys
 
-delay = 10
-
 heights = []
 for m in get_monitors():
     heights.append(int(str(m)[str(m).find("height="):].split(',', 1)[0][7:]))
@@ -18,6 +16,9 @@ for m in get_monitors():
 side = max(int(heights[0] // 100 * 1.5), 30)
 border = int(max(side / 10, 1))
 
+delay = int(input("Enter the delay of the pointer in milliseconds (-1 for default (10ms)): "))
+if delay == -1:
+    delay = 10
 
 def coordinateOffset(operand, userInput=False):
     if userInput is False:
@@ -179,6 +180,7 @@ for i in range(2):
     else:
         text = "LEFT CLICK THE SOLUTION ENDING POINT"
     pygame.display.set_caption(text)
+    print(text)
     finding = False
     while finding is False:
         pygame.event.pump()
