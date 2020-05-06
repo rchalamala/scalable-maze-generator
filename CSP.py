@@ -5,42 +5,27 @@ from random import choice
 from numpy import floor, full
 import pygame
 from pygame import Rect, MOUSEBUTTONDOWN
-
 from screeninfo import get_monitors
 import sys
 
-heights = []
-for m in get_monitors():
-    heights.append(int(str(m)[str(m).find("height="):].split(',', 1)[0][7:]))
-
-side = max(int(heights[0] // 100 * 1.5), 30)
-border = int(max(side / 10, 1))
-
-delay = int(input("Enter the delay of the pointer in milliseconds (-1 for default (10ms)): "))
-if delay == -1:
-    delay = 10
+side = 0
+border = 0
+delay = 0
+gridSize = 0
+consoleSize = 0
+console = None
+colorKeys = list(pygame.color.THECOLORS.keys())
 
 def coordinateOffset(operand, userInput=False):
     if userInput is False:
         return int(operand * (side + border) + border)
     return (operand - border) / (side + border)
 
-gridSize = int(input("Enter Grid Size: "))
-while gridSize < 2 or coordinateOffset(gridSize) + heights[0] / 1920 * 80 > heights[0]:
-    print("Entered input is invalid. ")
-    gridSize = int(input("Enter Grid Size: "))
-consoleSize = coordinateOffset(gridSize)
-
-colorKeys = list(pygame.color.THECOLORS.keys())
-colorKeys.sort()
-
-
 def printColors():
     for key in colorKeys:
         print(key)
 
 colors = []
-
 
 def colorInput(inputText):
     color = input(inputText).lower()
@@ -56,10 +41,35 @@ def colorInput(inputText):
     colors.append(color)
     return pygame.color.THECOLORS[color]
 
-blockColor = colorInput("Enter block color (Enter p to print all available colors): ")
-borderColor = colorInput("Enter border color (Enter p to print all available colors): ")
-trackerColor = colorInput("Enter tracker color (Enter p to print all available colors): ")
-
+def initialize():
+    colorKeys.sort()
+    heights = []
+    for m in get_monitors():
+        heights.append(int(str(m)[str(m).find("height="):].split(',', 1)[0][7:]))
+    global side
+    side = max(int(heights[0] // 100 * 1.5), 30)
+    global border
+    border = int(max(side / 10, 1))
+    global delay
+    delay = int(input("Enter the delay of the pointer in milliseconds (-1 for default (10ms)): "))
+    if delay == -1:
+        delay = 10
+    global gridSize
+    gridSize = int(input("Enter Grid Size: "))
+    while gridSize < 2 or coordinateOffset(gridSize) + heights[0] / 1920 * 80 > heights[0]:
+        print("Entered input is invalid. ")
+        gridSize = int(input("Enter Grid Size: "))
+    global consoleSize
+    consoleSize = coordinateOffset(gridSize)
+    global blockColor
+    blockColor = colorInput("Enter block color (Enter p to print all available colors): ")
+    global borderColor
+    borderColor = colorInput("Enter border color (Enter p to print all available colors): ")
+    global trackerColor
+    trackerColor = colorInput("Enter tracker color (Enter p to print all available colors): ")
+    pygame.init()
+    global console
+    console = pygame.display.set_mode((consoleSize, consoleSize))
 
 def checkForExit():
     pygame.event.pump()
@@ -67,9 +77,6 @@ def checkForExit():
         if action.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-
-pygame.init()
-console = pygame.display.set_mode((consoleSize, consoleSize))
 
 class Maze:
     def __init__(self, _gridSize, _coordinates):
@@ -125,19 +132,19 @@ class Maze:
             if len(neighbors) != 0:
                 randNeighbor = choice(neighbors)
                 self._moveTo(randNeighbor)
-                if self._solutionStack[-1] != coordinates[1]:
+                if self._solutionStack[-1] != self._coordinates[1]:
                     self._solutionStack.append(randNeighbor)
             else:
                 top = self._stack[-1]
                 self._stack.pop()
                 self._updateTracker(top, self._stack[-1])
-                if self._solutionStack[-1] != coordinates[1]:
+                if self._solutionStack[-1] != self._coordinates[1]:
                     self._solutionStack.pop()
             pygame.display.set_caption("Rahul Chalamala - APCSP Create - Maze Generation Status: " + "%0.2f" % (self._visitedCount / self._gridArea * 100) + "%")
             checkForExit()
 
     def traverseSolution(self):
-        pygame.draw.rect(console, blockColor, (coordinateOffset(maze._stack[-1][0]), coordinateOffset(maze._stack[-1][1]), side, side))
+        pygame.draw.rect(console, blockColor, (coordinateOffset(self._stack[-1][0]), coordinateOffset(self._stack[-1][1]), side, side))
         pygame.display.update()
         pygame.display.set_caption("Rahul Chalamala - APCSP Create - Maze Solution Status: 0.00%")
         originalSize = len(self._solutionStack)
@@ -165,41 +172,40 @@ class Maze:
             pygame.display.update()
             checkForExit()
 
-pygame.draw.rect(console, borderColor, (0, 0, coordinateOffset(gridSize), coordinateOffset(gridSize)))
+def main():
+    initialize()
+    pygame.draw.rect(console, borderColor, (0, 0, coordinateOffset(gridSize), coordinateOffset(gridSize)))
+    for i in range(gridSize):
+        for j in range(gridSize):
+            pygame.draw.rect(console, blockColor, (coordinateOffset(i), coordinateOffset(j), side, side))
+    pygame.display.update()
+    coordinates = []
+    for i in range(2):
+        if i == 0:
+            text = "LEFT CLICK THE GENERATION/SOLUTION STARTING POINT"
+        else:
+            text = "LEFT CLICK THE SOLUTION ENDING POINT"
+        pygame.display.set_caption(text)
+        print(text)
+        finding = False
+        while finding is False:
+            pygame.event.pump()
+            for action in pygame.event.get():
+                if action.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif action.type == MOUSEBUTTONDOWN:
+                    pair = pygame.mouse.get_pos()
+                    x = int(floor(coordinateOffset(pair[0], True)))
+                    y = int(floor(coordinateOffset(pair[1], True)))
+                    coordinates.append((x, y))
+                    finding = True
+                    break
+    maze = Maze(gridSize, coordinates)
+    maze.visitNeighbors()
+    maze.traverseSolution()
+    while True:
+        checkForExit()
 
-for i in range(gridSize):
-    for j in range(gridSize):
-        pygame.draw.rect(console, blockColor, (coordinateOffset(i), coordinateOffset(j), side, side))
-pygame.display.update()
-
-coordinates = []
-
-for i in range(2):
-    if i == 0:
-        text = "LEFT CLICK THE GENERATION/SOLUTION STARTING POINT"
-    else:
-        text = "LEFT CLICK THE SOLUTION ENDING POINT"
-    pygame.display.set_caption(text)
-    print(text)
-    finding = False
-    while finding is False:
-        pygame.event.pump()
-        for action in pygame.event.get():
-            if action.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            elif action.type == MOUSEBUTTONDOWN:
-                pair = pygame.mouse.get_pos()
-                x = int(floor(coordinateOffset(pair[0], True)))
-                y = int(floor(coordinateOffset(pair[1], True)))
-                coordinates.append((x, y))
-                finding = True
-                break
-
-maze = Maze(gridSize, coordinates)
-
-maze.visitNeighbors()
-maze.traverseSolution()
-
-while True:
-    checkForExit()
+if __name__ == '__main__':
+    main()
