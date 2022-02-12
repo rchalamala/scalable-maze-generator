@@ -5,4 +5,4 @@ The maze is generated through a depth-first search (DFS) with backtracking. The 
 
 There is support for variable display size and resolutions, custom grid size and colors, and a fake solve.
 
-[Example Generation and Solution](example.png)
+![Example Generation and Solution](example.png)
